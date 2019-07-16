@@ -4,6 +4,12 @@
 
 IPGeo-Search is a python module which allows for easy use of the IPGeo API. It allows both free and paid users to send requests to the server in just one line of code, allowing for customization of how IP lists are loaded. We offer both a paid and free versions of our API on [Our Webpage](http://ipgeo.azurewebsites.net/).
 
+To Install IPGeoSearch, run
+
+```cmd
+pip install IPGeoSearch
+```
+
 ## Requirements
 
 Before running on your local computer, make sure you have `python 3.6+` with the latest version of `pandas` installed.
