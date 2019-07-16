@@ -107,3 +107,5 @@ venv.bak/
 try.py
 ultra_user.key
 ipList.txt
+setup.py
+__init__.py

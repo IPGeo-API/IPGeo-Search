@@ -1,7 +1,6 @@
 import pandas as pd
 import json
 import ast
-import pandas as pd
 import time
 import requests
 
@@ -32,9 +31,8 @@ def search(ipList,path, **kwargs):
         return out
     def warnLimit(limit):
         if len(ipList) > limit:
-            print("Your IP List is longer than "+str(limit)+" entires, which is more than alloted for your version. Sending it would result in an error from the server.")
-            print("Please shorten your list so that all your IP's may be processed.")
-            exit()
+            raise ValueError("Your IP List is longer than "+str(limit)+" entires, which is more than alloted for your version. "+
+            "Sending it would result in an error from the server. Please shorten your list so that all your IP's may be processed.")
     def parseResult(ip,res, **kwargs):
         with open(path+ip+".json", 'w') as result:
             result.write(res)
@@ -80,10 +78,13 @@ def search(ipList,path, **kwargs):
                         'isp':'ISP', 'organization':'Organization','organization_type':'Organization Type','isic_code':'ISIC','naics_code':'NAICS'
                         ,'connection_type':'Connection Type','ip_routing_type':'IP Routing Type','line_speed':'Line Speed'})
                 except:
-                    raise RuntimeError('IP does Not Exist Check '+ip+'.json for more details.')
+                    raise RuntimeError("Something went really wrong. Either the IP does not exist in the database, they key is not valid, or "+
+                    "another error occured. Check "+ip+".json for more details and file an issue if you are unable to solve the problem.")
                 result.close()
         return df.to_csv(path_or_buf=path+ip+".csv", sep =',', index = False)
-    
+    if any(not isinstance(y,(str)) for y in ipList):
+        raise TypeError("An entry in ipList is not a string at line and cannot be read by the server")
+
     if 'key' not in kwargs:
         url = 'https://ipgeo.azurewebsites.net/try'
         warnLimit(10)
@@ -93,7 +94,7 @@ def search(ipList,path, **kwargs):
             res = requests.post(url, data=ipsearch, headers=authentication)
             res = res.text
             if res in ['{"message": "10 per 1 month"}\n']:
-                raise RuntimeError('You Have Exceded your search limit Monthly Limit')
+                raise RuntimeError('You Have Exceded your Monthly search Limit')
             parseResult(ip, res)
     else:
          
@@ -117,7 +118,7 @@ def search(ipList,path, **kwargs):
                     res = requests.post(url, data=ipsearch, headers=authentication)
                     res = res.text
                     if res in ['{"message": "1000 per 1 month"}\n','{"message": "10000 per 1 month"}\n','{"message": "100000 per 1 month"}\n']:
-                        raise RuntimeError('You Have Exceded your search limit Monthly Limit')
+                        raise RuntimeError('You Have Exceded your Monthly search Limit')
 
                     parseResult(ip, res)
             if 'key_type' in kwargs and kwargs.get('key_type') not in ['basic','premium','deluxe','ultra']:
