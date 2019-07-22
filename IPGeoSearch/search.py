@@ -4,7 +4,16 @@ import ast
 import time
 import requests
 
-def search(ipList,path, **kwargs):
+def search(ipList,path,key, **kwargs):
+    try:
+        ipList = ipList
+    except:
+        raise ValueError("IP list was not specified.")
+    try:
+        key = key
+    except:
+        raise ValueError("Key was not specified.")
+        
     def flatten_json(nested_json):
         """
         Flatten json object with nested keys into a single level.
@@ -29,10 +38,6 @@ def search(ipList,path, **kwargs):
 
         flatten(nested_json)
         return out
-    def warnLimit(limit):
-        if len(ipList) > limit:
-            raise ValueError("Your IP List is longer than "+str(limit)+" entires, which is more than alloted for your version. "+
-            "Sending it would result in an error from the server. Please shorten your list so that all your IP's may be processed.")
     def parseResult(ip,res, **kwargs):
         with open(path+ip+".json", 'w') as result:
             result.write(res)
@@ -78,13 +83,28 @@ def search(ipList,path, **kwargs):
                         'isp':'ISP', 'organization':'Organization','organization_type':'Organization Type','isic_code':'ISIC','naics_code':'NAICS'
                         ,'connection_type':'Connection Type','ip_routing_type':'IP Routing Type','line_speed':'Line Speed'})
                 except:
-                    raise RuntimeError("Something went really wrong. Either the IP does not exist in the database, they key is not valid, or "+
+                    raise RuntimeError("Something went really wrong. Either the IP does not exist in the database, server is down or "+
                     "another error occured. Check "+ip+".json for more details and file an issue if you are unable to solve the problem.")
                 result.close()
         return df.to_csv(path_or_buf=path+ip+".csv", sep =',', index = False)
     if any(not isinstance(y,(str)) for y in ipList):
         raise TypeError("An entry in ipList is not a string at line and cannot be read by the server")
 
+    url = 'https://ipgeo.azurewebsites.net/IPsearch'
+    for ip in ipList:
+        ipsearch = "{\n\t\"ip\":\""+ip+"\"\n}"
+        authKey=key.replace('\n', '')
+        authentication = {"x-api-key":authKey, 'Content-Type': "application/json"}
+        res = requests.post(url, data=ipsearch, headers=authentication)
+        res = res.text
+        if res in ['{"message":"Your Key is invalid. Please purchase a key or start a trial."}\n']:
+            raise RuntimeError('Your Key is Invalid. Please purchase a key or start a trial.')
+        if res in ['{"message":"Your Trial Period has expired. Please purchase a key."}\n']:
+            raise RuntimeError('Your Trial Period has expired. Please purchase a key.')
+        if res in ['{"message":"Your Key has expired. Please purchase a new key."}\n']:
+            raise RuntimeError('Your Key has expired. Please purchase a new key.')
+        parseResult(ip, res)
+"""
     if 'key' not in kwargs:
         url = 'https://ipgeo.azurewebsites.net/try'
         warnLimit(10)
@@ -125,7 +145,7 @@ def search(ipList,path, **kwargs):
                 raise TypeError("A key type was inputed was not a valid key type. Valid Key types are: basic, premium, deluxe, and ultra")
             if 'key_type' not in kwargs:
                 raise TypeError("A key was inputed but a valid key type was not specified. Valid Key types are: basic, premium, deluxe, and ultra")
-        
+"""     
 
 
 
