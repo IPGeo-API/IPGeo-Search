@@ -47,7 +47,6 @@ with open('ipList.txt', 'r') as f:
 search.search(ipList=ips,path='path/for/download',key='key')
 ```
 
-
 #### Errors
 
 Common Errors are:
