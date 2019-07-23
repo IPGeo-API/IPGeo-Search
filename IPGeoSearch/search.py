@@ -103,6 +103,10 @@ def search(ipList,path,key, **kwargs):
             raise RuntimeError('Your Trial Period has expired. Please purchase a key.')
         if res in ['{"message":"Your Key has expired. Please purchase a new key."}\n']:
             raise RuntimeError('Your Key has expired. Please purchase a new key.')
+        if res in ['{"message":"The Network you are using in unknown and key cannot be secured. Please change networks."}\n']:
+            raise RuntimeError('The Network you are using in unknown and key cannot be secured. Please change networks.')
+        if res in ['{"message":"Your Key is being used on a different network than it was registered on. Please use your original network or purchase a new key for this network."}\n']:
+            raise RuntimeError('Your Key is being used on a different network than it was registered on. Please use your original network or purchase a new key for this network.')
         parseResult(ip, res)
 """
     if 'key' not in kwargs:

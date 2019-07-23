@@ -2,7 +2,7 @@
 
 ## About
 
-IPGeo-Search is a python module which allows for easy use of the [IPGeo API](https://github.com/MatthiasRathbun/IPGeo). It allows both free and paid users to send requests to the server in just one line of code, allowing for customization of how IP lists are loaded. We offer both a paid and free versions of our API on [Our Webpage](http://ipgeo.azurewebsites.net/).
+IPGeo-Search is a python module which allows for easy use of the [IPGeo API](https://github.com/MatthiasRathbun/IPGeo). It allows both free and paid users to send requests to the server in just one line of code, allowing for customization of how IP lists are loaded. We offer a 5 day free trial for our API on [Our Webpage](http://ipgeo.azurewebsites.net/). To get the free trial API Key, contact our Lab and we will send it to you.
 
 To Install IPGeoSearch, run
 
@@ -33,7 +33,7 @@ key: The API Key sent to you.
 
 ```
 
-### Examples
+### Example
 
 To use the either version, you must supply your key to the server.
 
@@ -41,10 +41,14 @@ To use the either version, you must supply your key to the server.
 from IPGeoSearch import search
 
 with open('ipList.txt', 'r') as f:
-    ips = [line.strip() for line in f]
+    ip = [line.strip() for line in f]
     f.close()
 
-search.search(ipList=ips,path='path/for/download',key='key')
+with open('yourkey.key', 'r') as hashkey:
+    key=hashkey.read().replace('\n', '')
+    hashkey.close()
+
+search.search(ipList=ip,path='',key=key)
 ```
 
 #### Errors
@@ -56,6 +60,8 @@ TypeError: "An entry in ipList is not a string at line and cannot be read by the
 RuntimeError: "Your Key is Invalid. Please purchase a key or start a trial."
 RuntimeError: "Your Trial Period has expired. Please purchase a key."
 RuntimeError: "Your Key has expired. Please purchase a new key."
+RuntimeError: "The Network you are using in unknown and key cannot be secured. Please change networks."
+RuntimeError: "Your Key is being used on a different network than it was registered on. Please use your original network or purchase a new key for this network."
 ValueError: "IP list was not specified."
 ValueError: "Key was not specified."
 ```
