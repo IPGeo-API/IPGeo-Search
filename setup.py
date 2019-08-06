@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="IPGeoSearch",
-    version="1.0.0",
+    version="1.0.1",
     author="Matthias Rathbun, Cyber Threat Intelligence Lab",
     author_email="matthiasrathbun@gmail.com",
     python_requires='>=3.6',

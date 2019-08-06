@@ -66,7 +66,7 @@ def search(ipList,path,key, **kwargs):
                         'location_latitude':'Latitude','location_longitude':'Longitude','autonomous_system_number':'ASN','autonomous_system_organization':'ASO',
                         'isp':'ISP', 'organization':'Organization','organization_type':'Organization Type','isic_code':'ISIC','naics_code':'NAICS'
                         ,'connection_type':'Connection Type','ip_routing_type':'IP Routing Type','line_speed':'Line Speed'})
-                    elif 'subdivisions_0_names_en' in df:
+                    elif 'subdivisions_0_names_en' in df and 'location_latitude' in df:
                         df = df[['ip','subdivisions_0_names_en','country_names_en','continent_names_en','location_latitude','location_longitude',
                         'autonomous_system_number','autonomous_system_organization','isp','organization','organization_type','isic_code','naics_code','connection_type',
                         'ip_routing_type','line_speed']]
@@ -74,7 +74,7 @@ def search(ipList,path,key, **kwargs):
                         'location_latitude':'Latitude','location_longitude':'Longitude','autonomous_system_number':'ASN','autonomous_system_organization':'ASO',
                         'isp':'ISP', 'organization':'Organization','organization_type':'Organization Type','isic_code':'ISIC','naics_code':'NAICS'
                         ,'connection_type':'Connection Type','ip_routing_type':'IP Routing Type','line_speed':'Line Speed'})
-                    else:
+                    elif 'continent_names_en' in df and 'country_names_en' in df:
                         df = df[['ip','country_names_en','continent_names_en','location_latitude','location_longitude',
                         'autonomous_system_number','autonomous_system_organization','isp','organization','organization_type','isic_code','naics_code','connection_type',
                         'ip_routing_type','line_speed']]
@@ -82,6 +82,23 @@ def search(ipList,path,key, **kwargs):
                         'location_latitude':'Latitude','location_longitude':'Longitude','autonomous_system_number':'ASN','autonomous_system_organization':'ASO',
                         'isp':'ISP', 'organization':'Organization','organization_type':'Organization Type','isic_code':'ISIC','naics_code':'NAICS'
                         ,'connection_type':'Connection Type','ip_routing_type':'IP Routing Type','line_speed':'Line Speed'})
+                    elif 'registered_country_names_en' in df and 'location_longitude' not in df:
+                        df = df[['ip','registered_country_names_en',
+                        'autonomous_system_number','autonomous_system_organization','isp','organization','organization_type','isic_code','naics_code','connection_type',
+                        'ip_routing_type','line_speed']]
+                        df = df.rename(columns={'registred_country_names_en':'Country',
+                        'autonomous_system_number':'ASN','autonomous_system_organization':'ASO',
+                        'isp':'ISP', 'organization':'Organization','organization_type':'Organization Type','isic_code':'ISIC','naics_code':'NAICS'
+                        ,'connection_type':'Connection Type','ip_routing_type':'IP Routing Type','line_speed':'Line Speed'})
+                    else:
+                        df = df[['ip','registered_country_names_en','location_latitude','location_longitude',
+                        'autonomous_system_number','autonomous_system_organization','isp','organization','organization_type','isic_code','naics_code','connection_type',
+                        'ip_routing_type','line_speed']]
+                        df = df.rename(columns={'registered_country_names_en':'Country',
+                        'location_latitude':'Latitude','location_longitude':'Longitude','autonomous_system_number':'ASN','autonomous_system_organization':'ASO',
+                        'isp':'ISP', 'organization':'Organization','organization_type':'Organization Type','isic_code':'ISIC','naics_code':'NAICS'
+                        ,'connection_type':'Connection Type','ip_routing_type':'IP Routing Type','line_speed':'Line Speed'})
+
                 except:
                     raise RuntimeError("Something went really wrong. Either the IP does not exist in the database, server is down or "+
                     "another error occured. Check "+ip+".json for more details and file an issue if you are unable to solve the problem.")
